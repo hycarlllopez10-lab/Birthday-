@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Happy Birthday ❤️</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+/* ===== RESET ===== */
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+html,body{
+width:100%;
+height:100%;
+overflow:hidden;
+font-family:'Cormorant Garamond',serif;
+}
+
+/* ===== BACKGROUND ===== */
+
+body{
+
+background:
+radial-gradient(circle at top,#b80000 0%,#730000 40%,#2a0000 100%);
+
+}
+
+/* ===== CANVAS ===== */
+
+canvas{
+
+position:fixed;
+left:0;
+top:0;
+width:100%;
+height:100%;
+z-index:1;
+
+}
+
+/* ===== START SCREEN ===== */
+
+#startScreen{
+
+position:fixed;
+
+left:0;
+top:0;
+
+width:100%;
+height:100%;
+
+background:#240000;
+
+display:flex;
+justify-content:center;
+align-items:center;
+
+z-index:999;
+
+transition:1s;
+
+}
+
+#startScreen.hide{
+
+opacity:0;
+pointer-events:none;
+
+}
+
+#startBtn{
+
+padding:18px 42px;
+
+font-size:24px;
+
+border:none;
+
+border-radius:60px;
+
+background:white;
+
+color:#b00000;
+
+cursor:pointer;
+
+font-weight:bold;
+
+box-shadow:0 0 25px rgba(255,255,255,.4);
+
+transition:.35s;
+
+}
+
+#startBtn:hover{
+
+transform:scale(1.08);
+
+}
+
+/* ===== MESSAGE ===== */
+
+#message{
+
+position:absolute;
+
+left:6%;
+top:9%;
+
+width:34%;
+
+color:white;
+
+opacity:0;
+
+transition:2s;
+
+z-index:5;
+
+}
+
+#title{
+
+font-size:50px;
+
+font-weight:700;
+
+margin-bottom:18px;
+
+}
+
+#line{
+
+width:170px;
+
+height:2px;
+
+background:white;
+
+opacity:.7;
+
+margin-bottom:25px;
+
+}
+
+#text{
+
+font-size:22px;
+
+line-height:1.6;
+
+white-space:pre-line;
+
+}
+
+.cursor{
+
+display:inline-block;
+
+width:2px;
+
+height:24px;
+
+background:white;
+
+animation:blink .8s infinite;
+
+}
+
+@keyframes blink{
+
+50%{
+opacity:0;
+}
+
+}
+
+/* ===== MOBILE ===== */
+
+@media(max-width:900px){
+
+#message{
+
+width:50%;
+
+left:20px;
+top:30px;
+
+}
+
+#title{
+
+font-size:34px;
+
+}
+
+#text{
+
+font-size:17px;
+
+}
+
+#line{
+
+width:110px;
+
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="startScreen">
+
+<button id="startBtn">
+🎁 Press for Surprise ❤️
+</button>
+
+</div>
+
+<audio id="music" loop>
+    <source src="music.mp3" type="audio/mpeg">
+</audio>
+
+<div id="message">
+
+<div id="title">
+Happy Birthday ❤️
+</div>
+
+<div id="line"></div>
+
+<div id="text"></div>
+
+</div>
+
+<canvas id="canvas"></canvas>
+
+<script>
+
+const birthdayMessage=`To the most beautiful lady, 
+
+May God bless you with
+good health, peace, success,
+and happiness.
+
+May every dream
+you hold in your heart
+come true.
+
+Thank you for being
+such a wonderful person.
+
+Happy Birthday YURI ❤️
+
+From: HYCARL 🫶`;
+
+const canvas=document.getElementById("canvas");
+const ctx=canvas.getContext("2d");
+
+const text=document.getElementById("text");
+
+const startBtn=document.getElementById("startBtn");
+const startScreen=document.getElementById("startScreen");
+const music=document.getElementById("music");
+const message=document.getElementById("message");
+
+function resize(){
+
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+
+}
+
+resize();
+
+window.addEventListener("resize",resize);
+
+let started=false;
+
+// ===============================
+// TYPEWRITER EFFECT
+// ===============================
+
+let typeIndex = 0;
+
+function typeWriter(){
+
+    if(typeIndex < birthdayMessage.length){
+
+        text.innerHTML += birthdayMessage.charAt(typeIndex);
+
+        typeIndex++;
+
+        setTimeout(typeWriter,40);
+
+    }else{
+
+        text.innerHTML += "<span class='cursor'></span>";
+
+    }
+
+}
+
+// ===============================
+// HEART CLASS
+// ===============================
+
+class Heart{
+
+    constructor(x,y,size){
+
+        this.x=x;
+        this.y=y;
+        this.size=size;
+
+        this.offset=Math.random()*1000;
+
+    }
+
+    draw(time){
+
+        const floatY=Math.sin(time*0.002+this.offset)*3;
+
+        ctx.save();
+
+        ctx.translate(this.x,this.y+floatY);
+
+        ctx.scale(this.size,this.size);
+
+        ctx.fillStyle="#ff3333";
+
+        ctx.shadowColor="#ff5555";
+        ctx.shadowBlur=18;
+
+        ctx.beginPath();
+
+        ctx.moveTo(0,-5);
+
+        ctx.bezierCurveTo(8,-15,25,-2,0,18);
+
+        ctx.bezierCurveTo(-25,-2,-8,-15,0,-5);
+
+        ctx.fill();
+
+        ctx.restore();
+
+    }
+
+}
+
+const hearts=[];
+
+// ===============================
+// CREATE HEART TREE
+// ===============================
+
+function generateTree(){
+
+    hearts.length=0;
+
+    const centerX=canvas.width*0.73;
+    const centerY=canvas.height*0.33;
+
+    for(let i=0;i<900;i++){
+
+        const t=Math.random()*Math.PI*2;
+        const r=Math.sqrt(Math.random());
+
+        const x=16*Math.pow(Math.sin(t),3);
+
+        const y=-(13*Math.cos(t)
+                -5*Math.cos(2*t)
+                -2*Math.cos(3*t)
+                -Math.cos(4*t));
+
+        hearts.push(
+
+            new Heart(
+
+                centerX+x*12*r,
+
+                centerY+y*12*r,
+
+                Math.random()*0.35+0.18
+
+            )
+
+        );
+
+    }
+
+}
+
+generateTree();
+
+// ===============================
+// DRAW TREE TRUNK
+// ===============================
+
+function drawTree(){
+
+    const x = canvas.width * 0.73;
+    const y = canvas.height * 0.53;
+
+    ctx.save();
+
+    ctx.strokeStyle = "#ff6666";
+    ctx.shadowColor = "#ff4444";
+    ctx.shadowBlur = 30;
+    ctx.lineWidth = 12;
+
+    // Main trunk
+    ctx.beginPath();
+
+    ctx.moveTo(x, canvas.height);
+
+    ctx.bezierCurveTo(
+        x-15,
+        canvas.height*0.82,
+        x-10,
+        canvas.height*0.67,
+        x,
+        y
+    );
+
+    ctx.stroke();
+
+    ctx.lineWidth = 7;
+
+    // Left branch
+    ctx.beginPath();
+
+    ctx.moveTo(x,y);
+
+    ctx.quadraticCurveTo(
+        x-70,
+        y-80,
+        x-170,
+        y-150
+    );
+
+    ctx.stroke();
+
+    // Right branch
+    ctx.beginPath();
+
+    ctx.moveTo(x,y);
+
+    ctx.quadraticCurveTo(
+        x+70,
+        y-80,
+        x+170,
+        y-150
+    );
+
+    ctx.stroke();
+
+    ctx.restore();
+
+}
+
+// ===============================
+// BACKGROUND GLOW
+// ===============================
+
+function drawGlow(){
+
+    const glow = ctx.createRadialGradient(
+
+        canvas.width*0.73,
+        canvas.height*0.33,
+        20,
+
+        canvas.width*0.73,
+        canvas.height*0.33,
+        260
+
+    );
+
+    glow.addColorStop(0,"rgba(255,90,90,.35)");
+    glow.addColorStop(.5,"rgba(255,40,40,.18)");
+    glow.addColorStop(1,"rgba(255,0,0,0)");
+
+    ctx.fillStyle = glow;
+
+    ctx.beginPath();
+
+    ctx.arc(
+
+        canvas.width*0.73,
+        canvas.height*0.33,
+
+        260,
+
+        0,
+
+        Math.PI*2
+
+    );
+
+    ctx.fill();
+
+}
+
+// ===============================
+// FLOATING HEARTS
+// ===============================
+
+const floatingHearts = [];
+
+for(let i=0;i<50;i++){
+
+    floatingHearts.push({
+
+        x:Math.random()*canvas.width,
+        y:Math.random()*canvas.height,
+
+        speed:Math.random()*0.8+0.3,
+
+        size:Math.random()*0.25+0.12
+
+    });
+
+}
+
+function drawFloating(){
+
+    floatingHearts.forEach(h=>{
+
+        h.y -= h.speed;
+
+        if(h.y < -30){
+
+            h.y = canvas.height+30;
+            h.x = Math.random()*canvas.width;
+
+        }
+
+        ctx.save();
+
+        ctx.translate(h.x,h.y);
+
+        ctx.scale(h.size,h.size);
+
+        ctx.globalAlpha = .45;
+
+        ctx.fillStyle="#ff4d4d";
+
+        ctx.beginPath();
+
+        ctx.moveTo(0,-5);
+
+        ctx.bezierCurveTo(8,-15,25,-2,0,18);
+        ctx.bezierCurveTo(-25,-2,-8,-15,0,-5);
+
+        ctx.fill();
+
+        ctx.restore();
+
+    });
+
+}
+
+// ===============================
+// SPARKLES
+// ===============================
+
+const sparkles=[];
+
+for(let i=0;i<120;i++){
+
+    sparkles.push({
+
+        x:canvas.width*0.73+(Math.random()-0.5)*260,
+        y:canvas.height*0.33+(Math.random()-0.5)*260,
+
+        alpha:Math.random(),
+        speed:Math.random()*0.02+0.01,
+        radius:Math.random()*2+1
+
+    });
+
+}
+
+function drawSparkles(){
+
+    sparkles.forEach(s=>{
+
+        s.alpha += s.speed;
+
+        if(s.alpha>1){
+
+            s.speed *= -1;
+
+        }
+
+        if(s.alpha<0){
+
+            s.alpha=0;
+
+            s.speed=Math.random()*0.02+0.01;
+
+            s.x=canvas.width*0.73+(Math.random()-0.5)*260;
+            s.y=canvas.height*0.33+(Math.random()-0.5)*260;
+
+        }
+
+        ctx.save();
+
+        ctx.globalAlpha=s.alpha;
+
+        ctx.fillStyle="white";
+
+        ctx.shadowBlur=15;
+        ctx.shadowColor="white";
+
+        ctx.beginPath();
+
+        ctx.arc(s.x,s.y,s.radius,0,Math.PI*2);
+
+        ctx.fill();
+
+        ctx.restore();
+
+    });
+
+}
+
+// ===============================
+// ANIMATION LOOP
+// ===============================
+
+function animate(time){
+
+    if(!started) return;
+
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    drawGlow();
+
+    drawFloating();
+
+    drawTree();
+
+    hearts.forEach(h=>h.draw(time));
+
+    drawSparkles();
+
+    requestAnimationFrame(animate);
+
+}
+
+// ===============================
+// START BUTTON
+// ===============================
+
+startBtn.addEventListener("click",()=>{
+
+    if(started) return;
+
+    started=true;
+
+    startScreen.classList.add("hide");
+
+    message.style.opacity="1";
+
+    music.play().catch(()=>{});
+
+    typeWriter();
+
+    requestAnimationFrame(animate);
+
+});
+
+</script>
+
+</body>
+</html>
